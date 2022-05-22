@@ -1,0 +1,6 @@
+- connect to firebase ---[X]
+- login page  using firebase ---[X]
+- signup page using firebase ---[X]
+- preforming CRUD operation in firebase realtime ---[-]
+- using firestore to store profile image ---[-]
+- working on designs
