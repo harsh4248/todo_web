@@ -3,14 +3,17 @@ import Login from "./components/login";
 import Signup from "./components/signup";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from 'firebase/auth';
+import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 import Landing from "./components/landing";
+import { useEffect } from "react";
 const App = () => {
   const firebaseConfig = {
     apiKey: "AIzaSyD43q-BZA2qhlrsc0-401PfjsSK4XPQGrg",
     authDomain: "todo-web-e9131.firebaseapp.com",
     projectId: "todo-web-e9131",
     storageBucket: "todo-web-e9131.appspot.com",
+    databaseURL: "https://todo-web-e9131-default-rtdb.firebaseio.com/",
     messagingSenderId: "130565600713",
     appId: "1:130565600713:web:00d9f807c5f02479bf6418",
     measurementId: "G-DGSN24YE65",
@@ -18,13 +21,15 @@ const App = () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const analytics = getAnalytics(app);
+  const database = getDatabase(app);
+  
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/landing" element={<Landing/>}/>
+          <Route path="/landing" element={<Landing />} />
         </Routes>
       </Router>
     </div>

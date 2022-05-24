@@ -1,7 +1,7 @@
-
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";
 const Signup = () => {
   const navigate = useNavigate();
   const [firstName, setfirstName] = useState("");
@@ -15,6 +15,11 @@ const Signup = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        const db = getDatabase();
+        set(ref(db,'users/' + user.uid), {
+          'firstName' : firstName,
+          'lastName' : lastName
+        })
         navigate("/landing",);
         console.log('here');
       })

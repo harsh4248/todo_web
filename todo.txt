@@ -2,5 +2,11 @@
 - login page  using firebase ---[X]
 - signup page using firebase ---[X]
 - preforming CRUD operation in firebase realtime ---[-]
+    -- enable realtime database ---[X]
+    -- main dashbord ---[-]
+        --- use database to read from database ---[-]
+        --- use to add in list ---[-]
+        --- use  to update ---[-]
+        --- use to delete ---[-]
 - using firestore to store profile image ---[-]
-- working on designs
+- working on designs ---[-]
