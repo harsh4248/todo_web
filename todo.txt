@@ -3,7 +3,7 @@
 - signup page using firebase ---[X]
 - preforming CRUD operation in firebase realtime ---[-]
     -- enable realtime database ---[X]
-    -- main dashbord ---[-]
+    -- main dashbord ---[X]
         --- use database to read from database ---[-]
         --- use to add in list ---[-]
         --- use  to update ---[-]
