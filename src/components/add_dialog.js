@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { useState } from "react";
-import { getDatabase, ref, set,push } from "firebase/database";
+import { getDatabase, ref, set, push } from "firebase/database";
 import { getAuth } from "firebase/auth";
 
 const AddDialog = (props) => {
@@ -18,15 +18,11 @@ const AddDialog = (props) => {
   const [body, setbody] = useState("");
   const auth = getAuth();
   const db = getDatabase();
-  
-  
+
   const date = new Date();
 
   return (
-    <Dialog
-      open={isOpen}
-      fullWidth={true}
-    >
+    <Dialog open={isOpen} fullWidth={true}>
       <DialogTitle>Add Your TODO Item</DialogTitle>
       <DialogContent>
         <div>
@@ -90,10 +86,15 @@ const AddDialog = (props) => {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
-            const todoListRef = ref(db, "users/" + auth.currentUser.uid + "/todoItems");
-            const singleItemRef = push(todoListRef);
+              if (title === "" || body === "") {
+                return;
+              }
+              const todoListRef = ref(
+                db,
+                "users/" + auth.currentUser.uid + "/todoItems"
+              );
+              const singleItemRef = push(todoListRef);
               set(singleItemRef, {
-                
                 title: title,
                 body: body,
                 time:
@@ -104,16 +105,21 @@ const AddDialog = (props) => {
                   "-" +
                   date.getDate() +
                   "  " +
-                  date.getHours()+':'+date.getMinutes()+':'+date.getSeconds(),
-              }).then(() => {
-                isOpenSetter(false);
-                settitle("");
-                setbody("");
-                setter(data);
-              }).catch((error) => {
+                  date.getHours() +
+                  ":" +
+                  date.getMinutes() +
+                  ":" +
+                  date.getSeconds(),
+              })
+                .then(() => {
+                  isOpenSetter(false);
+                  settitle("");
+                  setbody("");
+                  setter(data);
+                })
+                .catch((error) => {
                   console.log(error.message);
-              });
-              
+                });
             }}
           >
             Add

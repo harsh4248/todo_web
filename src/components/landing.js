@@ -68,10 +68,12 @@ const Landing = () => {
         const temp = []
         snapshot.forEach((child)=> {
           const value = child.val();
+          const key = child.key;
           const title = value.title;
           const body = value.body;
           const time = value.time;
           const singleItem = {
+            key : key,
             title : title,
             body : body,
             time : time,
@@ -161,7 +163,7 @@ const Landing = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 grid-rows-4 p-2 h-full overflow-scroll">
+            <div className="grid gap-4 grid-cols-2 auto-rows-min p-2 h-full overflow-scroll">
               {todoDataArr.map((val, valIdx) => {
                 return (
                   <SingleItem
