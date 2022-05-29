@@ -11,6 +11,7 @@ const ShowDialog = (props) => {
   const isOpen = props.isOpen;
   const isOpenSetter = props.isOpenSetter;
   const data = props.data;
+  
   const [title, settitle] = useState(data.title);
   const [body, setbody] = useState(data.body);
   const updateHandler = () => {

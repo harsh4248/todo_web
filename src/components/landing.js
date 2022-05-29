@@ -1,7 +1,7 @@
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { useEffect, useState, useCallback } from "react";
+import { getDatabase, ref, onValue, remove } from "firebase/database";
 import SlideNavIcon from "./svgs/slide_nav_icon";
 
 import SideDrawer from "./side_drawer";
@@ -15,36 +15,57 @@ const Landing = () => {
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [showAddDialog, setshowAddDialog] = useState(false);
-  //const [idSet, setIdSet] = useState(new Set());
-
-  const data = [
-    {
-      title: "Lorem ipsum dolor sit amet.",
-      time: "11/12/2022",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim quia dolorem doloribus aliquid incidunt earum eum minus ipsa esse? Nobis quia id ex corrupti explicabo!",
-      
-    },
-    {
-      title: "Lorem ipsum dolor sit amet.",
-      time: "11/12/2022",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim quia dolorem doloribus aliquid incidunt earum eum minus ipsa esse? Nobis quia id ex corrupti explicabo!",
-      
-    },
-    {
-      title: "Lorem ipsum dolor sit amet.",
-      time: "11/12/2022",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim quia dolorem doloribus aliquid incidunt earum eum minus ipsa esse? Nobis quia id ex corrupti explicabo!",
-      
-    },
-    {
-      title: "Lorem ipsum dolor sit amet.",
-      time: "11/12/2022",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim quia dolorem doloribus aliquid incidunt earum eum minus ipsa esse? Nobis quia id ex corrupti explicabo!",
-      
-    },
-  ];
   const [todoDataArr, settodoDataArr] = useState([]);
-  //const data = [];
+  const fetchHandler = useCallback(() => {
+    if (auth.currentUser !== null) {
+      const todoItemsRef = ref(
+        db,
+        "users/" + auth.currentUser.uid + "/todoItems"
+      );
+      onValue(todoItemsRef, (snapshot) => {
+        const temp = [];
+        snapshot.forEach((child) => {
+          const value = child.val();
+          const key = child.key;
+          const title = value.title;
+          const body = value.body;
+          const time = value.time;
+          const singleItem = {
+            key: key,
+            title: title,
+            body: body,
+            time: time,
+          };
+          temp.push(singleItem);
+        });
+        settodoDataArr(temp);
+        
+      });
+    }
+  },[settodoDataArr]);
+  const deleteHandler = async (key)  =>  {
+    const auth = getAuth();
+    if (auth.currentUser !== null) {
+      const db = getDatabase();
+      const singleTodoRef = ref(
+        db,
+        "users/" + auth.currentUser.uid + "/todoItems/" + key
+      );
+      remove(singleTodoRef)
+        .then(() => {
+          
+          
+          const newArr = todoDataArr.filter(val => val.key !== key);
+          settodoDataArr([...newArr]);
+          console.log(todoDataArr);
+          console.log("deletion done");
+        }).then(() => {})
+        .catch((error) => {
+          console.log(error.message);
+        });
+        fetchHandler()
+    }
+  };
 
   useEffect(() => {
     if (auth.currentUser === null) {
@@ -60,30 +81,10 @@ const Landing = () => {
         const val = lastName.val();
         setlastName(val);
       });
-      const todoItemsRef = ref(
-        db,
-        "users/" + auth.currentUser.uid + "/todoItems"
-      );
-      onValue(todoItemsRef, (snapshot) => {
-        const temp = []
-        snapshot.forEach((child)=> {
-          const value = child.val();
-          const key = child.key;
-          const title = value.title;
-          const body = value.body;
-          const time = value.time;
-          const singleItem = {
-            key : key,
-            title : title,
-            body : body,
-            time : time,
-          }
-            temp.push(singleItem);
-        })
-        settodoDataArr(temp);
-      });
+
+      fetchHandler();
     }
-  }, [db, auth.currentUser,navigate]);
+  }, [db, auth.currentUser, navigate]);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -165,12 +166,11 @@ const Landing = () => {
           ) : (
             <div className="grid gap-4 grid-cols-2 auto-rows-min p-2 h-full overflow-scroll">
               {todoDataArr.map((val, valIdx) => {
+                console.log(todoDataArr);
                 return (
                   <SingleItem
-                    singleData={val}
-                    id={valIdx}
-                    dataArr={data}
-                    arrSetter={settodoDataArr}
+                    key = {valIdx}
+                    deleteHandler = {deleteHandler}
                   />
                 );
               })}

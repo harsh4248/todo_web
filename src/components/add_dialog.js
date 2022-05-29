@@ -115,7 +115,7 @@ const AddDialog = (props) => {
                   isOpenSetter(false);
                   settitle("");
                   setbody("");
-                  setter(data);
+                  //setter(data);
                 })
                 .catch((error) => {
                   console.log(error.message);
